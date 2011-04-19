@@ -1,6 +1,5 @@
 package de.pixelate.flixelprimer
 {
-import org.flixel.data.FlxKeyboard;
 import org.flixelPP.*
 
 import org.flixel.*;
@@ -20,18 +19,15 @@ public class Level1 extends FlxState
     public var comboText:FlxText;
     public var planes:FlxGroup;
     public var spawnTimer:Number = 2;
-    public var birdBombs:FlxGroup;
-    public static var scoreUnit:Number=100;
-    public static var comboCount:Number=0;
+    public var noLives:Number = 5;
+    public var lastUpdatedScore:Number = FlxG.score;
     public static var progressBar:FlxSprite;
     public static var progressBarWidth:Number=78;
-    public static var totalNumberofLives:Number=5;
-    public static var currentNumberofLives:Number=5;
+    public var scoreForNextLevel:Number=5000;
 
 
     override public function create():void
     {
-        FlxG.score = 0;
         bgColor = 0x000000;
 
 
@@ -91,11 +87,26 @@ public class Level1 extends FlxState
         FlxU.overlap(bandar,planes, overlapPlaneBandar);
         fadeOutComboText();
 
-        if (!currentNumberofLives)
+        if (noLives != Globals.currentNumberofLives)
         {
+            progressBar.x =
+                    (- Globals.totalNumberofLives + Globals.currentNumberofLives)
+                            / Globals.totalNumberofLives * progressBarWidth;
+            noLives = Globals.currentNumberofLives;
+            if (!Globals.currentNumberofLives)
+            {
             destroy();
             FlxG.state = new GameOver();
+            }
         }
+
+        if (lastUpdatedScore != FlxG.score)
+        {
+            lastUpdatedScore = FlxG.score;
+            updateScore();
+        }
+
+           checkIfSwitchToNextLevel();
 
 
         spawnTimer-=FlxG.elapsed;
@@ -107,6 +118,16 @@ public class Level1 extends FlxState
         super.update();
     }
 
+    protected function checkIfSwitchToNextLevel():void
+    {
+         if (FlxG.score > scoreForNextLevel)
+        {
+            destroy();
+            FlxG.state = new Level2Start();
+        }
+    }
+
+
     private function overlapBandarTrees(bandar: Bandar, tree:GreenTree):void
     {
         // We need to bring the bandar to rest
@@ -116,8 +137,8 @@ public class Level1 extends FlxState
         bandar.acceleration.y=0;
         bandar.angle=0;
         bandar.angularVelocity=0;
-        FlxG.score+=scoreUnit/2*comboCount;
-        comboCount=0;
+        FlxG.score+=Globals.scoreUnit/10*Globals.comboCount*Globals.comboCount;
+        Globals.comboCount=0;
         updateScore();
     }
 
@@ -133,13 +154,13 @@ public class Level1 extends FlxState
             bandar.velocity.x = Bandar ._x_speed;
         bandar.velocity.y=-Bandar._y_speed;
         plane.kill();
-        FlxG.score+=scoreUnit;
+        FlxG.score+=Globals.scoreUnit;
         updateScore();
 
 
-        ++comboCount;
+        ++Globals.comboCount;
 
-        comboText.text = comboCount + "x";
+        comboText.text = Globals.comboCount + "x";
         comboText.x = bandar.x
         comboText.y = bandar.y + 10;
         comboText.alpha = 1;
@@ -185,7 +206,7 @@ public class Level1 extends FlxState
         return emitter;
     }
 
-    private function spawnPlane():void
+    protected function spawnPlane():void
     {
         var y_cord:Number = Math.random()  * (FlxG.height /2) + 50;
         var plane:Plane = new Plane(0,y_cord);

@@ -12,8 +12,6 @@ public class Bandar extends FlxSpritePP
     public static var _gravity:Number = 400;
     public var _angular_speed:Number =  180 * _gravity / _y_speed;
     public var _ground_friction:Number = 100;
-    public var _floor_position:Number = 520;
-    public var _aboutToFall:Boolean;
     public static var _imageHeight:Number = 52;
     public static var _imageWidth:Number = 55;
 
@@ -100,10 +98,9 @@ public class Bandar extends FlxSpritePP
         }
         else if (y >FlxG.height - Bandar._imageHeight)
         {
-            FlxG.score+=Level1.scoreUnit/2*Level1.comboCount;
-            Level1.comboCount=0;
-            Level1.updateScore();
-            Level1.comboCount=0;
+            FlxG.score+=Globals.scoreUnit/10*Globals.comboCount*Globals.comboCount;
+            Globals.comboCount=0;
+            Globals.comboCount=0;
             // Monkey should  come to rest on floor
             acceleration.y=0;
             velocity.x=0;

@@ -17,9 +17,7 @@ package de.pixelate.flixelprimer
              {
                  // Out of the screen
                  kill();
-                 Level1.currentNumberofLives--;
-                 Level1.progressBar.x = (- Level1.totalNumberofLives + Level1.currentNumberofLives)
-                         / Level1.totalNumberofLives * Level1.progressBarWidth;
+                 Globals.currentNumberofLives--;
              }
              super.update();
 		}	

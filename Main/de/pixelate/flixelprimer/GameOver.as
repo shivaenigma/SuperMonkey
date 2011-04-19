@@ -22,7 +22,8 @@ public class GameOver extends FlxState {
     {
         if (FlxG.keys.ENTER)
         {
-        Level1.currentNumberofLives = 5;
+        Globals.currentNumberofLives = 5;
+        FlxG.score = 0;
         FlxG.state = new Level1;
         }
    }
